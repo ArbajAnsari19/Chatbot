@@ -21,7 +21,7 @@ const AdminPanel: React.FC = () => {
 
   const fetchSavedChats = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/saved-chats');
+      const response = await axios.get('https://chatbotb-esu1lichr-arbajansari19s-projects.vercel.app/api/saved-chats');
       setSavedChats(response.data);
     } catch (error) {
       console.error('Error fetching saved chats:', error);
