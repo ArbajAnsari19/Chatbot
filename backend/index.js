@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: '*' })); 
 app.use(express.json());
 
 // Endpoint to handle chat requests
