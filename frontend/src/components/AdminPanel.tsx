@@ -46,9 +46,6 @@ const AdminPanel: React.FC = () => {
           </div>
         ))}
       </div>
-      <button className="back-button" onClick={() => window.location.href = '/chat'}>
-        Back to Chat
-      </button>
     </div>
   );
 };
