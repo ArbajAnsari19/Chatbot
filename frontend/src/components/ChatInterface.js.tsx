@@ -16,7 +16,7 @@ const Chatbot = () => {
 
   const handleSaveChat = async (item:any) => {
     try {
-      await axios.post('https://chatbotb-esu1lichr-arbajansari19s-projects.vercel.app/api/save-chat', {
+      await axios.post('https://chatbot-1-clxz.onrender.com/api/save-chat', {
         query: item.query,
         response: {
           summary: item.summary,
