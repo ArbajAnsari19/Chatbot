@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux';
-import { store } from './utils/store.ts';
+import { store } from '../src/utils/Store.ts';
 import App from './App.tsx'
 import './index.css'
 
