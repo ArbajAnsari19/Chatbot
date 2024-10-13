@@ -3,18 +3,23 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addResponse } from '../features/chatSlice';
 import { RootState } from '../utils/Store';
 import axios from 'axios';
-import { Send, Save } from 'lucide-react';
+import { Send, Save, X, MessageSquare, Zap, Star } from 'lucide-react';
 
 const Chatbot = () => {
   const [query, setQuery] = useState('');
   const dispatch = useDispatch();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const history = useSelector((state: RootState) => state.chat.history);
   const [errorMessage, setErrorMessage] = useState('');
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const chatBodyRef = useRef<HTMLDivElement>(null);
 
-  const handleSaveChat = async (item:any) => {
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const handleSaveChat = async (item: any) => {
     try {
       await axios.post('https://chatbot-1-clxz.onrender.com/api/save-chat', {
         query: item.query,
@@ -31,6 +36,7 @@ const Chatbot = () => {
       alert('Failed to save chat. Please try again.');
     }
   };
+
   useEffect(() => {
     if (chatBodyRef.current) {
       chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
@@ -72,18 +78,15 @@ const Chatbot = () => {
 
   const formatMessage = (text: string) => {
     return text.split(/\n+/).map((line, index) => {
-      // Handle bold text
       const formattedLine = line.split(/(\*\*.*?\*\*|\*.*?\*)/).map((part, idx) => {
         if (part.startsWith('**') && part.endsWith('**')) {
           return <strong key={idx}>{part.slice(2, -2)}</strong>;
         } else if (part.startsWith('*') && part.endsWith('*')) {
           return <em key={idx}>{part.slice(1, -1)}</em>;
         }
-        
         return part;
       });
   
-      // Handle bullet points with indentation
       if (line.startsWith('- ')) {
         return (
           <div key={index} style={{ marginLeft: '20px', marginBottom: '10px' }}>
@@ -92,7 +95,6 @@ const Chatbot = () => {
         );
       }
   
-      // Handle headings (## or ###)
       if (line.startsWith('## ')) {
         return (
           <h2 key={index} style={{ marginTop: '20px', marginBottom: '10px' }}>
@@ -109,7 +111,6 @@ const Chatbot = () => {
         );
       }
   
-      // Default paragraph handling with spacing
       return (
         <p key={index} style={{ marginTop: '10px', marginBottom: '10px' }}>
           {formattedLine}
@@ -117,56 +118,81 @@ const Chatbot = () => {
       );
     });
   };
-  
 
   return (
     <div className="chatbot-container">
-      {/* Sidebar */}
-      <div className="sidebar">
+      <button className={`menu-button ${isSidebarOpen ? 'open' : ''}`} onClick={toggleSidebar}>
+        ☰
+      </button>
+      <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+        <button className={`close-button ${isSidebarOpen ? 'open' : ''}`} onClick={toggleSidebar}>
+          <X size={24} />
+        </button>
         <div className="sidebar-content">
           <h2 className="sidebar-title">Chat History</h2>
-          <ul className="history-list">
-            {history.map((item) => (
-              <li key={item.id} className="history-item">
-                <p className="history-query">{item.query}</p>
-                <p className="history-summary">{item.summary}</p>
-                <button className="save-button" title="Save Response" onClick={() => handleSaveChat(item)}>
-                Save this Response<Save size={12} />
-                </button>
-              </li>
-            ))}
-          </ul>
+          {history.length === 0 ? (
+            <div className="empty-history">
+              <MessageSquare className="empty-history-icon" />
+              <p className="empty-history-text">No chat history yet. Start a conversation!</p>
+            </div>
+          ) : (
+            <ul className="history-list">
+              {history.map((item) => (
+                <li key={item.id} className="history-item">
+                  <p className="history-query">{item.query}</p>
+                  <p className="history-summary">{item.summary}</p>
+                  <button className="save-button" title="Save Response" onClick={() => handleSaveChat(item)}>
+                    Save this Response<Save size={12} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
-      {/* Main chat area */}
       <div className="chat-main">
+        <div className='chat-title'>
+          <p>Chat Section</p>
+        </div>
         <div className="chat-body" ref={chatBodyRef}>
-          {history.map((item) => (
-            <div key={item.id} className="message-container">
-              <div className="user-message">
-                <div className="message-content">
-                  <p>{formatMessage(item.query)}</p>
-                </div>
+          {history.length === 0 ? (
+            <div className="welcome-message">
+              <div className="welcome-icons">
+                <MessageSquare className="welcome-icon" />
+                <Zap className="welcome-icon" />
+                <Star className="welcome-icon" />
               </div>
-              <div className="bot-message">
-                <div className="message-content">
-                  <p>{formatMessage(item.response)}</p>
-                  <p><b>Summary: </b>{formatMessage(item.summary)}</p>
-                </div>
-              </div>
+              <h2 className="welcome-text">Welcome to AI Chat Assistant!</h2>
+              <p className="welcome-subtext">Ask me anything, and I'll do my best to help you.</p>
             </div>
-          ))}
+          ) : (
+            history.map((item) => (
+              <div key={item.id} className="message-container">
+                <div className="user-message">
+                  <div className="message-content">
+                    <p>{formatMessage(item.query)}</p>
+                  </div>
+                </div>
+                <div className="bot-message">
+                  <div className="message-content">
+                    <p>{formatMessage(item.response)}</p>
+                    <p><b>Summary: </b>{formatMessage(item.summary)}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
           {isLoading && (
             <div className="dot-spinner">
-                <div className="dot-spinner__dot"></div>
-                <div className="dot-spinner__dot"></div>
-                <div className="dot-spinner__dot"></div>
-                <div className="dot-spinner__dot"></div>
-                <div className="dot-spinner__dot"></div>
-                <div className="dot-spinner__dot"></div>
-                <div className="dot-spinner__dot"></div>
-                <div className="dot-spinner__dot"></div>
+              <div className="dot-spinner__dot"></div>
+              <div className="dot-spinner__dot"></div>
+              <div className="dot-spinner__dot"></div>
+              <div className="dot-spinner__dot"></div>
+              <div className="dot-spinner__dot"></div>
+              <div className="dot-spinner__dot"></div>
+              <div className="dot-spinner__dot"></div>
+              <div className="dot-spinner__dot"></div>
             </div>
           )}
           {errorMessage && (
@@ -176,7 +202,6 @@ const Chatbot = () => {
           )}
         </div>
 
-        {/* Input area */}
         <div className="input-area">
           <div className="input-container">
             <input
@@ -185,12 +210,25 @@ const Chatbot = () => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Ask me anything..."
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSend();
+                }
+              }}
             />
             <button
               className="send-button"
               onClick={handleSend}
             >
-              <Send size={20} />
+              {isLoading ? (
+                <div className="spinner">
+                  <div className="spinner__dot"></div>
+                  <div className="spinner__dot"></div>
+                  <div className="spinner__dot"></div>
+                </div>
+              ) : (
+                <Send size={20} />
+              )}
             </button>
           </div>
         </div>

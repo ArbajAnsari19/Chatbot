@@ -28,6 +28,14 @@ const AdminPanel: React.FC = () => {
     }
   };
 
+  // Utility function to replace markdown-like syntax with HTML equivalents
+  const formatText = (text: string) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Replaces **text** with <strong>text</strong>
+      .replace(/##(.*?)##/g, '<h2>$1</h2>')  // Replaces ##text## with <h2>text</h2>
+      .replace(/\n/g, '<br />'); // Replaces newlines with <br />
+  };
+
   return (
     <div className="admin-panel">
       <h2 className="admin-title">Admin Panel - Saved User Responses</h2>
@@ -37,9 +45,10 @@ const AdminPanel: React.FC = () => {
             <p className="chat-query">
               <strong>Query:</strong> {chat.query}
             </p>
-            <p className="chat-response">
-              <strong>Response:</strong> {chat.response.result_text}
-            </p>
+            <div
+              className="chat-response"
+              dangerouslySetInnerHTML={{ __html: formatText(chat.response.result_text) }}
+            ></div>
             <p className="chat-summary">
               <strong>Summary:</strong> {chat.response.summary}
             </p>
