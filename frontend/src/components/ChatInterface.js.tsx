@@ -16,7 +16,7 @@ const Chatbot = () => {
 
   const handleSaveChat = async (item:any) => {
     try {
-      await axios.post('https://chatbotb-esu1lichr-arbajansari19s-projects.vercel.app/api/save-chat', {
+      await axios.post('https://chatbot-1-clxz.onrender.com/api/save-chat', {
         query: item.query,
         response: {
           summary: item.summary,
@@ -42,7 +42,7 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const res = await axios.post('https://chatbotb-esu1lichr-arbajansari19s-projects.vercel.app/api/llm', { query, sessionId });
+      const res = await axios.post('https://chatbot-1-clxz.onrender.com/api/llm', { query, sessionId });
       const response = res.data;
 
       if (response.error) {

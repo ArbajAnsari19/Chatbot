@@ -18,6 +18,12 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 // Middleware
 app.use(cors({ origin: '*' })); 
 app.use(express.json());
+
+app.get('/', (req,res)=>{
+  res.send('hello')
+});
+
+
 // Endpoint to handle chat requests
 app.post('/api/llm', async (req, res) => {
   const { query } = req.body;

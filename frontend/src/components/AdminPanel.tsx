@@ -21,7 +21,7 @@ const AdminPanel: React.FC = () => {
 
   const fetchSavedChats = async () => {
     try {
-      const response = await axios.get('https://chatbotb-esu1lichr-arbajansari19s-projects.vercel.app/api/saved-chats');
+      const response = await axios.get('https://chatbot-1-clxz.onrender.com/api/saved-chats');
       setSavedChats(response.data);
     } catch (error) {
       console.error('Error fetching saved chats:', error);
@@ -46,9 +46,6 @@ const AdminPanel: React.FC = () => {
           </div>
         ))}
       </div>
-      <button className="back-button" onClick={() => window.location.href = '/chat'}>
-        Back to Chat
-      </button>
     </div>
   );
 };
